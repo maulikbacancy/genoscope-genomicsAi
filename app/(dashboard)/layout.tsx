@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const userEmail = user.email ?? "";
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "#0a0f1e" }}>
+    <div className="flex h-screen overflow-hidden" style={{ background: "var(--bg-page)" }}>
       <Sidebar userRole={userRole} userName={userName} userEmail={userEmail} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-y-auto">

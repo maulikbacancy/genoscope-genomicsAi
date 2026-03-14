@@ -66,15 +66,15 @@ function UploadSampleForm() {
             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(16,185,129,0.15)" }}>
               <CheckCircle size={32} className="text-emerald-400" />
             </div>
-            <h2 className="text-xl font-bold text-white mb-3">Analysis Complete!</h2>
+            <h2 className="text-xl font-bold mb-3" style={{ color: "var(--text-primary)" }}>Analysis Complete!</h2>
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.04)" }}>
-                <div className="text-3xl font-bold text-white mb-1">{result.variants_found}</div>
-                <div className="text-sm text-slate-400">Variants Found</div>
+              <div className="rounded-xl p-4" style={{ background: "var(--bg-hover)" }}>
+                <div className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>{result.variants_found}</div>
+                <div className="text-sm" style={{ color: "var(--text-secondary)" }}>Variants Found</div>
               </div>
               <div className="rounded-xl p-4" style={{ background: "rgba(244,63,94,0.05)", border: "1px solid rgba(244,63,94,0.1)" }}>
                 <div className="text-3xl font-bold text-rose-400 mb-1">{result.pathogenic_found}</div>
-                <div className="text-sm text-slate-400">Pathogenic</div>
+                <div className="text-sm" style={{ color: "var(--text-secondary)" }}>Pathogenic</div>
               </div>
             </div>
             <Link href={`/cases/${caseId}`}
@@ -93,7 +93,7 @@ function UploadSampleForm() {
       <Topbar title="Upload Sample" subtitle="Upload VCF/genomic data file" />
       <div className="p-6 max-w-2xl mx-auto w-full">
         {caseId && (
-          <Link href={`/cases/${caseId}`} className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm mb-6">
+          <Link href={`/cases/${caseId}`} className="inline-flex items-center gap-2 text-sm mb-6 hover:opacity-80 transition-opacity" style={{ color: "var(--text-secondary)" }}>
             <ArrowLeft size={16} /> Back to case
           </Link>
         )}
@@ -103,8 +103,8 @@ function UploadSampleForm() {
           style={{ background: "rgba(59,130,246,0.05)", border: "1px solid rgba(59,130,246,0.15)" }}>
           <Dna size={20} className="text-blue-400 flex-shrink-0" />
           <div className="flex-1">
-            <div className="text-sm font-medium text-white">No VCF file? Download a demo</div>
-            <div className="text-xs text-slate-400">Generate a sample VCF file with 30 mock variants for testing</div>
+            <div className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>No VCF file? Download a demo</div>
+            <div className="text-xs" style={{ color: "var(--text-secondary)" }}>Generate a sample VCF file with 30 mock variants for testing</div>
           </div>
           <button onClick={downloadMockVCF}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-blue-400 hover:text-blue-300 transition-all"
@@ -113,7 +113,7 @@ function UploadSampleForm() {
           </button>
         </div>
 
-        <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="card rounded-2xl p-6">
           {error && (
             <div className="mb-4 p-3 rounded-lg text-sm flex items-center gap-2"
               style={{ background: "rgba(244,63,94,0.1)", border: "1px solid rgba(244,63,94,0.2)", color: "#f43f5e" }}>
@@ -130,8 +130,8 @@ function UploadSampleForm() {
               onClick={() => document.getElementById("file-input")?.click()}
               className="cursor-pointer rounded-2xl p-10 text-center transition-all"
               style={{
-                background: dragging ? "rgba(59,130,246,0.08)" : file ? "rgba(16,185,129,0.05)" : "rgba(255,255,255,0.02)",
-                border: `2px dashed ${dragging ? "rgba(59,130,246,0.5)" : file ? "rgba(16,185,129,0.4)" : "rgba(255,255,255,0.1)"}`,
+                background: dragging ? "rgba(59,130,246,0.08)" : file ? "rgba(16,185,129,0.05)" : "var(--bg-hover)",
+                border: `2px dashed ${dragging ? "rgba(59,130,246,0.5)" : file ? "rgba(16,185,129,0.4)" : "var(--border)"}`,
               }}>
               <input id="file-input" type="file" accept=".vcf,.vcf.gz,.txt" className="hidden"
                 onChange={(e) => e.target.files?.[0] && setFile(e.target.files[0])} />
@@ -139,34 +139,33 @@ function UploadSampleForm() {
                 <>
                   <FileText size={32} className="text-emerald-400 mx-auto mb-3" />
                   <p className="font-medium text-emerald-400">{file.name}</p>
-                  <p className="text-sm text-slate-400 mt-1">{(file.size / 1024).toFixed(1)} KB</p>
+                  <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>{(file.size / 1024).toFixed(1)} KB</p>
                 </>
               ) : (
                 <>
-                  <Upload size={32} className="text-slate-500 mx-auto mb-3" />
-                  <p className="font-medium text-white mb-1">Drop your VCF file here</p>
-                  <p className="text-sm text-slate-400">or click to browse</p>
-                  <p className="text-xs text-slate-600 mt-2">Supports: .vcf, .vcf.gz</p>
+                  <Upload size={32} className="mx-auto mb-3" style={{ color: "var(--text-muted)" }} />
+                  <p className="font-medium mb-1" style={{ color: "var(--text-primary)" }}>Drop your VCF file here</p>
+                  <p className="text-sm" style={{ color: "var(--text-secondary)" }}>or click to browse</p>
+                  <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>Supports: .vcf, .vcf.gz</p>
                 </>
               )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Barcode / Sample ID</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>Barcode / Sample ID</label>
                 <input value={barcode} onChange={(e) => setBarcode(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl text-white text-sm outline-none font-mono"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", fontFamily: "'JetBrains Mono', monospace" }} />
+                  className="field-input w-full px-4 py-3 rounded-xl text-sm outline-none font-mono"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Sample Type</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>Sample Type</label>
                 <select value={sampleType} onChange={(e) => setSampleType(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl text-white text-sm outline-none"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", fontFamily: "inherit" }}>
-                  <option value="whole_genome" style={{ background: "#1e293b" }}>Whole Genome Sequencing (WGS)</option>
-                  <option value="whole_exome" style={{ background: "#1e293b" }}>Whole Exome Sequencing (WES)</option>
-                  <option value="panel" style={{ background: "#1e293b" }}>Gene Panel</option>
-                  <option value="rna" style={{ background: "#1e293b" }}>RNA Sequencing</option>
+                  className="field-input w-full px-4 py-3 rounded-xl text-sm outline-none">
+                  <option value="whole_genome" style={{ background: "var(--bg-card-solid)" }}>Whole Genome Sequencing (WGS)</option>
+                  <option value="whole_exome" style={{ background: "var(--bg-card-solid)" }}>Whole Exome Sequencing (WES)</option>
+                  <option value="panel" style={{ background: "var(--bg-card-solid)" }}>Gene Panel</option>
+                  <option value="rna" style={{ background: "var(--bg-card-solid)" }}>RNA Sequencing</option>
                 </select>
               </div>
             </div>
@@ -192,7 +191,7 @@ function UploadSampleForm() {
 
 export default function UploadSamplePage() {
   return (
-    <Suspense fallback={<div className="p-6 text-slate-400">Loading...</div>}>
+    <Suspense fallback={<div className="p-6" style={{ color: "var(--text-secondary)" }}>Loading...</div>}>
       <UploadSampleForm />
     </Suspense>
   );

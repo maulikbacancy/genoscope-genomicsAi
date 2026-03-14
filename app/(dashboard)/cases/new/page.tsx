@@ -7,13 +7,12 @@ import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, Save, Plus, X, Search } from "lucide-react";
 import Link from "next/link";
 
-const inputClass = "w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm outline-none";
-const inputStyle = { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", fontFamily: "inherit" };
+const inputClass = "field-input w-full px-4 py-3 rounded-xl text-sm outline-none";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-300 mb-2">{label}</label>
+      <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>{label}</label>
       {children}
     </div>
   );
@@ -125,12 +124,12 @@ function NewCaseForm() {
     <div className="flex flex-col min-h-full">
       <Topbar title="New Case" subtitle="Create a genomic analysis case" />
       <div className="p-6 max-w-3xl mx-auto w-full">
-        <Link href="/cases" className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm mb-6">
+        <Link href="/cases" className="inline-flex items-center gap-2 text-sm mb-6 hover:opacity-80 transition-opacity" style={{ color: "var(--text-secondary)" }}>
           <ArrowLeft size={16} /> Back to cases
         </Link>
 
-        <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-          <h2 className="text-xl font-bold text-white mb-6">Case Information</h2>
+        <div className="card rounded-2xl p-6">
+          <h2 className="text-xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>Case Information</h2>
 
           {error && (
             <div className="mb-4 p-3 rounded-lg text-sm"
@@ -143,10 +142,10 @@ function NewCaseForm() {
             <div className="grid grid-cols-2 gap-4">
               <Field label="Patient *">
                 <select value={form.patient_id} onChange={(e) => set("patient_id", e.target.value)} required
-                  className={inputClass} style={inputStyle}>
-                  <option value="" style={{ background: "#1e293b" }}>Select patient...</option>
+                  className={inputClass}>
+                  <option value="" style={{ background: "var(--bg-card-solid)" }}>Select patient...</option>
                   {patients.map((p) => (
-                    <option key={p.id} value={p.id} style={{ background: "#1e293b" }}>
+                    <option key={p.id} value={p.id} style={{ background: "var(--bg-card-solid)" }}>
                       {p.first_name} {p.last_name} ({p.mrn})
                     </option>
                   ))}
@@ -154,23 +153,23 @@ function NewCaseForm() {
               </Field>
               <Field label="Priority *">
                 <select value={form.priority} onChange={(e) => set("priority", e.target.value)}
-                  className={inputClass} style={inputStyle}>
-                  <option value="routine" style={{ background: "#1e293b" }}>Routine</option>
-                  <option value="urgent" style={{ background: "#1e293b" }}>Urgent</option>
-                  <option value="stat" style={{ background: "#1e293b" }}>STAT (Emergency)</option>
+                  className={inputClass}>
+                  <option value="routine" style={{ background: "var(--bg-card-solid)" }}>Routine</option>
+                  <option value="urgent" style={{ background: "var(--bg-card-solid)" }}>Urgent</option>
+                  <option value="stat" style={{ background: "var(--bg-card-solid)" }}>STAT (Emergency)</option>
                 </select>
               </Field>
             </div>
 
             <Field label="Inheritance Pattern">
               <select value={form.inheritance_pattern} onChange={(e) => set("inheritance_pattern", e.target.value)}
-                className={inputClass} style={inputStyle}>
-                <option value="unknown" style={{ background: "#1e293b" }}>Unknown</option>
-                <option value="autosomal_dominant" style={{ background: "#1e293b" }}>Autosomal Dominant</option>
-                <option value="autosomal_recessive" style={{ background: "#1e293b" }}>Autosomal Recessive</option>
-                <option value="x_linked" style={{ background: "#1e293b" }}>X-Linked</option>
-                <option value="y_linked" style={{ background: "#1e293b" }}>Y-Linked</option>
-                <option value="mitochondrial" style={{ background: "#1e293b" }}>Mitochondrial</option>
+                className={inputClass}>
+                <option value="unknown" style={{ background: "var(--bg-card-solid)" }}>Unknown</option>
+                <option value="autosomal_dominant" style={{ background: "var(--bg-card-solid)" }}>Autosomal Dominant</option>
+                <option value="autosomal_recessive" style={{ background: "var(--bg-card-solid)" }}>Autosomal Recessive</option>
+                <option value="x_linked" style={{ background: "var(--bg-card-solid)" }}>X-Linked</option>
+                <option value="y_linked" style={{ background: "var(--bg-card-solid)" }}>Y-Linked</option>
+                <option value="mitochondrial" style={{ background: "var(--bg-card-solid)" }}>Mitochondrial</option>
               </select>
             </Field>
 
@@ -193,21 +192,20 @@ function NewCaseForm() {
                   </div>
                 )}
                 <div className="relative">
-                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
                   <input value={phenoSearch}
                     onChange={(e) => { setPhenoSearch(e.target.value); setShowPhenoDropdown(true); }}
                     onFocus={() => setShowPhenoDropdown(true)}
                     placeholder="Search HPO terms (e.g. seizures, hypotonia)..."
-                    className="w-full pl-9 pr-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm outline-none"
-                    style={inputStyle} />
+                    className="field-input w-full pl-9 pr-4 py-3 rounded-xl text-sm outline-none" />
                   {showPhenoDropdown && filteredHPO.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 rounded-xl overflow-hidden shadow-xl"
-                      style={{ background: "#1e293b", border: "1px solid rgba(255,255,255,0.1)" }}>
+                      style={{ background: "var(--bg-card-solid)", border: "1px solid var(--border)" }}>
                       {filteredHPO.slice(0, 8).map((t) => (
                         <button key={t.hpo_id} type="button" onClick={() => addPhenotype(t)}
                           className="w-full text-left px-4 py-3 text-sm hover:bg-white/5 transition-colors flex items-center gap-3">
-                          <span className="text-xs text-slate-500 font-mono w-24 flex-shrink-0">{t.hpo_id}</span>
-                          <span className="text-slate-200">{t.name}</span>
+                          <span className="text-xs font-mono w-24 flex-shrink-0" style={{ color: "var(--text-muted)" }}>{t.hpo_id}</span>
+                          <span style={{ color: "var(--text-primary)" }}>{t.name}</span>
                           <Plus size={12} className="ml-auto text-blue-400 flex-shrink-0" />
                         </button>
                       ))}
@@ -221,16 +219,14 @@ function NewCaseForm() {
               <textarea value={form.clinical_notes} onChange={(e) => set("clinical_notes", e.target.value)}
                 placeholder="Describe the patient's clinical presentation, symptoms, and history..."
                 rows={4}
-                className="w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm outline-none resize-none"
-                style={inputStyle} />
+                className="field-input w-full px-4 py-3 rounded-xl text-sm outline-none resize-none" />
             </Field>
 
             <Field label="Family History">
               <textarea value={form.family_history} onChange={(e) => set("family_history", e.target.value)}
                 placeholder="Describe relevant family medical history, consanguinity, affected relatives..."
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm outline-none resize-none"
-                style={inputStyle} />
+                className="field-input w-full px-4 py-3 rounded-xl text-sm outline-none resize-none" />
             </Field>
 
             <div className="flex items-center gap-3 pt-2">
@@ -241,8 +237,8 @@ function NewCaseForm() {
                 Create Case
               </button>
               <Link href="/cases"
-                className="px-6 py-3 rounded-xl font-semibold text-slate-400 hover:text-white transition-all"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                className="px-6 py-3 rounded-xl font-semibold transition-all hover:opacity-80"
+                style={{ background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text-secondary)" }}>
                 Cancel
               </Link>
             </div>
@@ -255,7 +251,7 @@ function NewCaseForm() {
 
 export default function NewCasePage() {
   return (
-    <Suspense fallback={<div className="p-6 text-slate-400">Loading...</div>}>
+    <Suspense fallback={<div className="p-6" style={{ color: "var(--text-secondary)" }}>Loading...</div>}>
       <NewCaseForm />
     </Suspense>
   );

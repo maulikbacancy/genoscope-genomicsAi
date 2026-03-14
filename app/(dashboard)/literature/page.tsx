@@ -49,11 +49,10 @@ export default function LiteraturePage() {
         <form onSubmit={handleSearch} className="mb-6">
           <div className="flex gap-3">
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
               <input value={query} onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search for gene, disease, or variant (e.g. 'BRCA1 pathogenic variant')"
-                className="w-full pl-11 pr-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm outline-none"
-                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", fontFamily: "inherit" }} />
+                className="field-input w-full pl-11 pr-4 py-3 rounded-xl text-sm outline-none" />
             </div>
             <button type="submit" disabled={searching}
               className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60"
@@ -68,8 +67,8 @@ export default function LiteraturePage() {
         <div className="flex flex-wrap gap-2 mb-6">
           {["BRCA1 variant pathogenic", "rare disease WGS diagnostic", "MECP2 Rett syndrome", "AI genomics diagnosis"].map((q) => (
             <button key={q} onClick={() => { setQuery(q); }}
-              className="text-xs px-3 py-1.5 rounded-full text-slate-400 hover:text-slate-200 transition-all"
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+              className="text-xs px-3 py-1.5 rounded-full transition-all hover:opacity-80"
+              style={{ background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text-secondary)" }}>
               {q}
             </button>
           ))}
@@ -77,25 +76,24 @@ export default function LiteraturePage() {
 
         <div className="space-y-4">
           {papers.map((paper) => (
-            <div key={paper.pmid} className="rounded-2xl p-5 cursor-pointer transition-all"
+            <div key={paper.pmid} className="card rounded-2xl p-5 cursor-pointer transition-all"
               onClick={() => setExpandedPmid(expandedPmid === paper.pmid ? null : paper.pmid)}
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(59,130,246,0.3)")}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")}>
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--border)")}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-white mb-1 leading-relaxed">{paper.title}</h3>
-                  <div className="flex items-center gap-2 flex-wrap text-sm text-slate-400">
+                  <h3 className="font-semibold mb-1 leading-relaxed" style={{ color: "var(--text-primary)" }}>{paper.title}</h3>
+                  <div className="flex items-center gap-2 flex-wrap text-sm" style={{ color: "var(--text-secondary)" }}>
                     <span>{paper.authors}</span>
                     <span>•</span>
                     <span className="text-blue-400 font-medium">{paper.journal}</span>
                     <span>•</span>
                     <span>{paper.year}</span>
                     <span>•</span>
-                    <span className="text-xs font-mono text-slate-500">PMID: {paper.pmid}</span>
+                    <span className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>PMID: {paper.pmid}</span>
                   </div>
                   {expandedPmid === paper.pmid && paper.abstract && (
-                    <p className="mt-3 text-sm text-slate-300 leading-relaxed">{paper.abstract}</p>
+                    <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--text-primary)" }}>{paper.abstract}</p>
                   )}
                 </div>
                 <a

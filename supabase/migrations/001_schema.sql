@@ -203,6 +203,65 @@ CREATE INDEX idx_variants_classification ON variants(classification);
 CREATE INDEX idx_samples_case ON samples(case_id);
 CREATE INDEX idx_patients_org ON patients(organization_id);
 
+-- ============================================================
+-- Schema permissions (required for Postgres 15+ / Supabase)
+-- ============================================================
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+
+GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO service_role;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO service_role;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO authenticated;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL ON TABLES TO service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL ON SEQUENCES TO service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL ON FUNCTIONS TO service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT ON TABLES TO anon;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT USAGE, SELECT ON SEQUENCES TO authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT EXECUTE ON FUNCTIONS TO authenticated;
+
+-- ============================================================
+-- RLS helper functions (SECURITY DEFINER to avoid recursion)
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.get_my_organization_id()
+RETURNS UUID
+LANGUAGE sql
+SECURITY DEFINER
+STABLE
+SET search_path = public, auth
+AS $$
+  SELECT organization_id
+  FROM public.user_profiles
+  WHERE id = auth.uid();
+$$;
+
+CREATE OR REPLACE FUNCTION public.get_my_role()
+RETURNS TEXT
+LANGUAGE sql
+SECURITY DEFINER
+STABLE
+SET search_path = public, auth
+AS $$
+  SELECT role::text
+  FROM public.user_profiles
+  WHERE id = auth.uid();
+$$;
+
+GRANT EXECUTE ON FUNCTION public.get_my_organization_id() TO anon, authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.get_my_role() TO anon, authenticated, service_role;
+
 -- Row Level Security
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
@@ -217,45 +276,145 @@ ALTER TABLE quality_metrics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE case_comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies: users can see data from their organization
-CREATE POLICY "org_isolation_patients" ON patients
-  FOR ALL USING (
-    organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())
+-- Organizations: allow authenticated signup flow; restrict mutating to admins
+CREATE POLICY organizations_select ON organizations
+  FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY organizations_insert ON organizations
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY organizations_update ON organizations
+  FOR UPDATE
+  USING (public.get_my_role() IN ('super_admin', 'org_admin'))
+  WITH CHECK (public.get_my_role() IN ('super_admin', 'org_admin'));
+CREATE POLICY organizations_delete ON organizations
+  FOR DELETE USING (public.get_my_role() = 'super_admin');
+
+-- User profiles: self access + elevated admin access without recursion
+CREATE POLICY user_profiles_select ON user_profiles
+  FOR SELECT
+  USING (id = auth.uid() OR public.get_my_role() IN ('super_admin', 'org_admin'));
+CREATE POLICY user_profiles_insert ON user_profiles
+  FOR INSERT
+  WITH CHECK (id = auth.uid() OR public.get_my_role() IN ('super_admin', 'org_admin'));
+CREATE POLICY user_profiles_update ON user_profiles
+  FOR UPDATE
+  USING (id = auth.uid() OR public.get_my_role() IN ('super_admin', 'org_admin'))
+  WITH CHECK (id = auth.uid() OR public.get_my_role() IN ('super_admin', 'org_admin'));
+
+-- Organization-scoped clinical data
+CREATE POLICY patients_org_isolation ON patients
+  FOR ALL
+  USING (organization_id = public.get_my_organization_id())
+  WITH CHECK (organization_id = public.get_my_organization_id());
+
+CREATE POLICY cases_org_isolation ON cases
+  FOR ALL
+  USING (organization_id = public.get_my_organization_id())
+  WITH CHECK (organization_id = public.get_my_organization_id());
+
+CREATE POLICY case_phenotypes_org_isolation ON case_phenotypes
+  FOR ALL
+  USING (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
+  )
+  WITH CHECK (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
   );
 
-CREATE POLICY "org_isolation_cases" ON cases
-  FOR ALL USING (
-    organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())
+CREATE POLICY samples_org_isolation ON samples
+  FOR ALL
+  USING (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
+  )
+  WITH CHECK (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
   );
 
-CREATE POLICY "users_own_profile" ON user_profiles
-  FOR ALL USING (id = auth.uid() OR
-    (SELECT role FROM user_profiles WHERE id = auth.uid()) IN ('super_admin', 'org_admin'));
-
-CREATE POLICY "org_isolation_samples" ON samples
-  FOR ALL USING (
-    case_id IN (SELECT id FROM cases WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
+CREATE POLICY variants_org_isolation ON variants
+  FOR ALL
+  USING (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
+  )
+  WITH CHECK (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
   );
 
-CREATE POLICY "org_isolation_variants" ON variants
-  FOR ALL USING (
-    case_id IN (SELECT id FROM cases WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
+CREATE POLICY ai_diagnoses_org_isolation ON ai_diagnoses
+  FOR ALL
+  USING (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
+  )
+  WITH CHECK (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
   );
 
-CREATE POLICY "org_isolation_reports" ON reports
-  FOR ALL USING (
-    case_id IN (SELECT id FROM cases WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
+CREATE POLICY reports_org_isolation ON reports
+  FOR ALL
+  USING (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
+  )
+  WITH CHECK (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
   );
 
-CREATE POLICY "org_isolation_comments" ON case_comments
-  FOR ALL USING (
-    case_id IN (SELECT id FROM cases WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
+CREATE POLICY quality_metrics_org_isolation ON quality_metrics
+  FOR ALL
+  USING (
+    sample_id IN (
+      SELECT s.id
+      FROM samples s
+      JOIN cases c ON c.id = s.case_id
+      WHERE c.organization_id = public.get_my_organization_id()
+    )
+  )
+  WITH CHECK (
+    sample_id IN (
+      SELECT s.id
+      FROM samples s
+      JOIN cases c ON c.id = s.case_id
+      WHERE c.organization_id = public.get_my_organization_id()
+    )
   );
 
-CREATE POLICY "org_isolation_ai_diagnoses" ON ai_diagnoses
-  FOR ALL USING (
-    case_id IN (SELECT id FROM cases WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()))
+CREATE POLICY case_comments_org_isolation ON case_comments
+  FOR ALL
+  USING (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
+  )
+  WITH CHECK (
+    case_id IN (
+      SELECT id FROM cases WHERE organization_id = public.get_my_organization_id()
+    )
   );
+
+CREATE POLICY audit_logs_self_or_admin ON audit_logs
+  FOR SELECT
+  USING (user_id = auth.uid() OR public.get_my_role() IN ('super_admin', 'org_admin'));
+
+CREATE POLICY audit_logs_insert_self_or_admin ON audit_logs
+  FOR INSERT
+  WITH CHECK (user_id = auth.uid() OR public.get_my_role() IN ('super_admin', 'org_admin'));
 
 -- Auto-update timestamps function
 CREATE OR REPLACE FUNCTION update_updated_at()

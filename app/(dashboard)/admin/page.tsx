@@ -32,57 +32,56 @@ export default async function AdminPage() {
             { label: "Total Cases", value: caseCount ?? 0, icon: Activity, color: "#10b981", bg: "rgba(16,185,129,0.1)", href: "/cases" },
           ].map(({ label, value, icon: Icon, color, bg, href }) => (
             <Link key={label} href={href}>
-              <div className="rounded-2xl p-5 hover:scale-[1.01] transition-all cursor-pointer"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="card rounded-2xl p-5 hover:scale-[1.01] transition-all cursor-pointer">
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: bg }}>
                     <Icon size={18} style={{ color }} />
                   </div>
-                  <ArrowRight size={14} className="text-slate-600" />
+                  <ArrowRight size={14} style={{ color: "var(--text-muted)" }} />
                 </div>
-                <div className="text-3xl font-bold text-white mb-1">{value}</div>
-                <div className="text-sm text-slate-400">{label}</div>
+                <div className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>{value}</div>
+                <div className="text-sm" style={{ color: "var(--text-secondary)" }}>{label}</div>
               </div>
             </Link>
           ))}
         </div>
 
         {/* Recent users */}
-        <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-          <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
-            <h3 className="font-semibold text-white">Recent Users</h3>
+        <div className="card rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "var(--border)" }}>
+            <h3 className="font-semibold" style={{ color: "var(--text-primary)" }}>Recent Users</h3>
             <Link href="/admin/users" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
               Manage all <ArrowRight size={14} />
             </Link>
           </div>
           <table className="w-full">
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+              <tr style={{ borderBottom: "1px solid var(--border)" }}>
                 {["User", "Email", "Role", "Joined"].map((h) => (
-                  <th key={h} className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">{h}</th>
+                  <th key={h} className="px-6 py-3 text-left text-xs font-medium uppercase" style={{ color: "var(--text-muted)" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {(recentUsers ?? []).map((u: any, i) => (
-                <tr key={u.id} style={{ borderBottom: i < (recentUsers?.length ?? 0) - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
+                <tr key={u.id} style={{ borderBottom: i < (recentUsers?.length ?? 0) - 1 ? "1px solid var(--border)" : "none" }}>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white"
                         style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)" }}>
                         {u.full_name?.[0] ?? "U"}
                       </div>
-                      <span className="text-sm font-medium text-white">{u.full_name}</span>
+                      <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{u.full_name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-400">{u.email}</td>
+                  <td className="px-6 py-4 text-sm" style={{ color: "var(--text-secondary)" }}>{u.email}</td>
                   <td className="px-6 py-4">
-                    <span className="text-xs px-2 py-1 rounded-lg text-slate-300 capitalize"
-                      style={{ background: "rgba(255,255,255,0.06)" }}>
+                    <span className="text-xs px-2 py-1 rounded-lg capitalize"
+                      style={{ background: "var(--bg-input)", color: "var(--text-primary)" }}>
                       {u.role?.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-400">{formatDate(u.created_at)}</td>
+                  <td className="px-6 py-4 text-sm" style={{ color: "var(--text-secondary)" }}>{formatDate(u.created_at)}</td>
                 </tr>
               ))}
             </tbody>

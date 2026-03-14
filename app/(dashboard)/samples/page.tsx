@@ -29,11 +29,11 @@ export default async function SamplesPage() {
     <div className="flex flex-col min-h-full">
       <Topbar title="Samples" subtitle={`${samples?.length ?? 0} samples tracked`} action={{ label: "Upload Sample", href: "/samples/new" }} />
       <div className="p-6">
-        <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="card rounded-2xl overflow-hidden">
           {!samples?.length ? (
             <div className="flex flex-col items-center justify-center py-16">
-              <FlaskConical size={32} className="text-slate-600 mb-3" />
-              <p className="text-slate-400 mb-4">No samples uploaded yet</p>
+              <FlaskConical size={32} className="mb-3" style={{ color: "var(--text-muted)" }} />
+              <p className="mb-4" style={{ color: "var(--text-secondary)" }}>No samples uploaded yet</p>
               <Link href="/samples/new" className="px-4 py-2 rounded-xl text-sm font-medium text-white"
                 style={{ background: "linear-gradient(135deg, #3b82f6, #06b6d4)" }}>
                 Upload First Sample
@@ -42,19 +42,19 @@ export default async function SamplesPage() {
           ) : (
             <table className="w-full">
               <thead>
-                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                <tr style={{ borderBottom: "1px solid var(--border)" }}>
                   {["Barcode", "Patient", "Case", "Type", "Status", "QC", "Date"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{h}</th>
+                    <th key={h} className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {(samples ?? []).map((s: any, i: number) => (
                   <tr key={s.id}
-                    style={{ borderBottom: i < (samples?.length ?? 0) - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
+                    style={{ borderBottom: i < (samples?.length ?? 0) - 1 ? "1px solid var(--border)" : "none" }}
                     className="hover:bg-white/[0.02]">
                     <td className="px-6 py-4 text-sm font-mono text-blue-400">{s.barcode}</td>
-                    <td className="px-6 py-4 text-sm text-slate-200">
+                    <td className="px-6 py-4 text-sm" style={{ color: "var(--text-primary)" }}>
                       {s.cases?.patients?.first_name} {s.cases?.patients?.last_name}
                     </td>
                     <td className="px-6 py-4">
@@ -62,7 +62,7 @@ export default async function SamplesPage() {
                         {s.cases?.case_number}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-400 capitalize">{s.sample_type?.replace("_", " ")}</td>
+                    <td className="px-6 py-4 text-sm capitalize" style={{ color: "var(--text-secondary)" }}>{s.sample_type?.replace("_", " ")}</td>
                     <td className="px-6 py-4">
                       <span className={`text-xs px-2 py-1 rounded-lg font-medium ${
                         s.status === "completed" ? "text-emerald-400 bg-emerald-400/10" :
@@ -77,9 +77,9 @@ export default async function SamplesPage() {
                         <span className={`text-xs px-2 py-1 rounded-lg font-medium ${s.qc_status === "pass" ? "text-emerald-400 bg-emerald-400/10" : "text-rose-400 bg-rose-400/10"}`}>
                           {s.qc_status}
                         </span>
-                      ) : <span className="text-slate-600 text-xs">—</span>}
+                      ) : <span className="text-xs" style={{ color: "var(--text-muted)" }}>—</span>}
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-400">{formatDate(s.created_at)}</td>
+                    <td className="px-6 py-4 text-sm" style={{ color: "var(--text-secondary)" }}>{formatDate(s.created_at)}</td>
                   </tr>
                 ))}
               </tbody>

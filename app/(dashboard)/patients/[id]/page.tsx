@@ -25,21 +25,21 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
       <Topbar title={`${patient.first_name} ${patient.last_name}`} subtitle={`MRN: ${patient.mrn}`}
         action={{ label: "New Case", href: `/cases/new?patient=${id}` }} />
       <div className="p-6 space-y-6">
-        <Link href="/patients" className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm">
+        <Link href="/patients" className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity" style={{ color: "var(--text-secondary)" }}>
           <ArrowLeft size={16} /> Back to patients
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Patient info card */}
-          <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="card rounded-2xl p-6">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-xl font-bold text-white"
                 style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)" }}>
                 {patient.first_name[0]}{patient.last_name[0]}
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white">{patient.first_name} {patient.last_name}</h2>
-                <p className="text-slate-400 text-sm font-mono">MRN: {patient.mrn}</p>
+                <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>{patient.first_name} {patient.last_name}</h2>
+                <p className="text-sm font-mono" style={{ color: "var(--text-secondary)" }}>MRN: {patient.mrn}</p>
               </div>
             </div>
             <div className="space-y-3">
@@ -57,8 +57,8 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
                     <Icon size={14} className="text-blue-400" />
                   </div>
                   <div>
-                    <div className="text-xs text-slate-500">{label}</div>
-                    <div className="text-sm text-slate-200">{value}</div>
+                    <div className="text-xs" style={{ color: "var(--text-muted)" }}>{label}</div>
+                    <div className="text-sm" style={{ color: "var(--text-primary)" }}>{value}</div>
                   </div>
                 </div>
               ))}
@@ -66,10 +66,9 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
           </div>
 
           {/* Cases */}
-          <div className="lg:col-span-2 rounded-2xl overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
-              <h3 className="font-semibold text-white flex items-center gap-2">
+          <div className="lg:col-span-2 card rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "var(--border)" }}>
+              <h3 className="font-semibold flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
                 <FolderOpen size={16} className="text-blue-400" /> Cases ({cases?.length ?? 0})
               </h3>
               <Link href={`/cases/new?patient=${id}`}
@@ -79,11 +78,11 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
             </div>
             {!cases?.length ? (
               <div className="flex flex-col items-center justify-center py-16">
-                <FolderOpen size={32} className="text-slate-600 mb-3" />
-                <p className="text-slate-400 text-sm">No cases for this patient yet</p>
+                <FolderOpen size={32} className="mb-3" style={{ color: "var(--text-muted)" }} />
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>No cases for this patient yet</p>
               </div>
             ) : (
-              <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+              <div className="divide-y" style={{ borderColor: "var(--border)" }}>
                 {cases.map((c) => (
                   <Link key={c.id} href={`/cases/${c.id}`}>
                     <div className="px-6 py-4 hover:bg-white/[0.02] transition-colors">
@@ -107,19 +106,19 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
                       {c.case_phenotypes?.length > 0 && (
                         <div className="flex flex-wrap gap-1">
                           {c.case_phenotypes.slice(0, 4).map((p: any) => (
-                            <span key={p.id} className="text-xs px-2 py-0.5 rounded-md text-slate-400"
-                              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                            <span key={p.id} className="text-xs px-2 py-0.5 rounded-md"
+                              style={{ background: "var(--bg-hover)", border: "1px solid var(--border)", color: "var(--text-secondary)" }}>
                               {p.name}
                             </span>
                           ))}
                           {c.case_phenotypes.length > 4 && (
-                            <span className="text-xs px-2 py-0.5 rounded-md text-slate-500">
+                            <span className="text-xs px-2 py-0.5 rounded-md" style={{ color: "var(--text-muted)" }}>
                               +{c.case_phenotypes.length - 4} more
                             </span>
                           )}
                         </div>
                       )}
-                      <div className="text-xs text-slate-500 mt-2">{formatDate(c.created_at)}</div>
+                      <div className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>{formatDate(c.created_at)}</div>
                     </div>
                   </Link>
                 ))}

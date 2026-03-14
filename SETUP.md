@@ -24,7 +24,7 @@ Then fill in the values:
 ## 2. Run Database Migration
 
 1. In Supabase dashboard → **SQL Editor**
-2. Paste the contents of `supabase/migrations/001_schema.sql`
+2. Run `supabase/migrations/001_schema.sql`
 3. Click **Run**
 
 ## 3. Enable Supabase Auth
@@ -47,6 +47,21 @@ npm run dev
 ```
 
 Open http://localhost:3000 → redirects to login → create account → done!
+
+## 5. Seed Full Demo Data (All Roles + Cases)
+
+After migrations are applied and `.env.local` is configured:
+
+```bash
+npm run seed:demo
+```
+
+This seeds:
+- Organizations
+- Auth users (all user roles)
+- User profiles
+- Patients, cases, samples, variants
+- Phenotypes, QC metrics, AI diagnoses, reports, comments
 
 ## Architecture
 

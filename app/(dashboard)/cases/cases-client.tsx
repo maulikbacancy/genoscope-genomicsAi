@@ -31,13 +31,13 @@ export function CasesClient({ cases }: Props) {
         <Topbar title="Cases" subtitle={`${cases.length} total cases`} action={{ label: "New Case", href: "/cases/new" }} />
         <div className="p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="flex rounded-xl overflow-hidden border" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+            <div className="flex rounded-xl overflow-hidden border" style={{ borderColor: "var(--border)" }}>
               {(["kanban", "list"] as const).map((v) => (
                 <button key={v} onClick={() => setView(v)}
                   className="px-4 py-2 text-sm font-medium transition-all capitalize"
                   style={{
                     background: view === v ? "rgba(59,130,246,0.2)" : "transparent",
-                    color: view === v ? "#60a5fa" : "#94a3b8",
+                    color: view === v ? "#60a5fa" : "var(--text-secondary)",
                   }}>
                   {v}
                 </button>
@@ -47,39 +47,39 @@ export function CasesClient({ cases }: Props) {
               <button key={p} onClick={() => setPriorityFilter(p)}
                 className="px-3 py-2 rounded-xl text-sm font-medium capitalize transition-all"
                 style={{
-                  background: priorityFilter === p ? "rgba(59,130,246,0.15)" : "rgba(255,255,255,0.04)",
-                  border: `1px solid ${priorityFilter === p ? "rgba(59,130,246,0.3)" : "rgba(255,255,255,0.07)"}`,
-                  color: priorityFilter === p ? "#60a5fa" : "#94a3b8",
+                  background: priorityFilter === p ? "rgba(59,130,246,0.15)" : "var(--bg-card)",
+                  border: `1px solid ${priorityFilter === p ? "rgba(59,130,246,0.3)" : "var(--border)"}`,
+                  color: priorityFilter === p ? "#60a5fa" : "var(--text-secondary)",
                 }}>
                 {p}
               </button>
             ))}
           </div>
-          <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="card rounded-2xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                <tr style={{ borderBottom: "1px solid var(--border)" }}>
                   {["Case #", "Patient", "Status", "Priority", "Phenotypes", "Created"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{h}</th>
+                    <th key={h} className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((c, i) => (
-                  <tr key={c.id} style={{ borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
+                  <tr key={c.id} style={{ borderBottom: i < filtered.length - 1 ? "1px solid var(--border)" : "none" }}
                     className="hover:bg-white/[0.02] transition-colors">
                     <td className="px-6 py-4">
                       <Link href={`/cases/${c.id}`} className="text-blue-400 hover:text-blue-300 font-mono text-sm font-medium">{c.case_number}</Link>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-200">{c.patients?.first_name} {c.patients?.last_name}</td>
+                    <td className="px-6 py-4 text-sm" style={{ color: "var(--text-primary)" }}>{c.patients?.first_name} {c.patients?.last_name}</td>
                     <td className="px-6 py-4">
                       <span className={`text-xs px-2 py-1 rounded-lg font-medium ${getCaseStatusColor(c.status)}`}>{c.status}</span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`text-xs px-2 py-1 rounded-lg ${c.priority === "stat" ? "text-rose-400 bg-rose-400/10" : c.priority === "urgent" ? "text-amber-400 bg-amber-400/10" : "text-slate-400 bg-slate-400/10"}`}>{c.priority}</span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-400">{c.case_phenotypes?.length ?? 0} terms</td>
-                    <td className="px-6 py-4 text-sm text-slate-400">{formatDate(c.created_at)}</td>
+                    <td className="px-6 py-4 text-sm" style={{ color: "var(--text-secondary)" }}>{c.case_phenotypes?.length ?? 0} terms</td>
+                    <td className="px-6 py-4 text-sm" style={{ color: "var(--text-secondary)" }}>{formatDate(c.created_at)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -96,11 +96,11 @@ export function CasesClient({ cases }: Props) {
       <Topbar title="Cases" subtitle={`${cases.length} total cases`} action={{ label: "New Case", href: "/cases/new" }} />
       <div className="p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="flex rounded-xl overflow-hidden border" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+          <div className="flex rounded-xl overflow-hidden border" style={{ borderColor: "var(--border)" }}>
             {(["kanban", "list"] as const).map((v) => (
               <button key={v} onClick={() => setView(v)}
                 className="px-4 py-2 text-sm font-medium transition-all capitalize"
-                style={{ background: view === v ? "rgba(59,130,246,0.2)" : "transparent", color: view === v ? "#60a5fa" : "#94a3b8" }}>
+                style={{ background: view === v ? "rgba(59,130,246,0.2)" : "transparent", color: view === v ? "#60a5fa" : "var(--text-secondary)" }}>
                 {v}
               </button>
             ))}
@@ -117,48 +117,44 @@ export function CasesClient({ cases }: Props) {
                   <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: meta.bg }}>
                     <StatusIcon size={12} style={{ color: meta.color }} />
                   </div>
-                  <span className="text-sm font-medium text-slate-300">{meta.label}</span>
-                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full text-slate-400"
-                    style={{ background: "rgba(255,255,255,0.05)" }}>
+                  <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{meta.label}</span>
+                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full" style={{ background: "var(--bg-hover)", color: "var(--text-secondary)" }}>
                     {statusCases.length}
                   </span>
                 </div>
                 <div className="space-y-3">
                   {statusCases.length === 0 && (
-                    <div className="rounded-xl p-4 text-center text-sm text-slate-600"
-                      style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.06)" }}>
+                    <div className="rounded-xl p-4 text-center text-sm" style={{ color: "var(--text-muted)", background: "var(--bg-card)", border: "1px dashed var(--border)" }}>
                       No cases
                     </div>
                   )}
                   {statusCases.map((c) => (
                     <Link key={c.id} href={`/cases/${c.id}`}>
-                      <div className="rounded-xl p-4 cursor-pointer transition-all hover:scale-[1.01]"
-                        style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
+                      <div className="rounded-xl p-4 cursor-pointer transition-all hover:scale-[1.01] card"
                         onMouseEnter={(e) => (e.currentTarget.style.borderColor = meta.color + "55")}
-                        onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")}>
+                        onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--border)")}>
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-xs font-mono text-blue-400">{c.case_number}</span>
                           <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${c.priority === "stat" ? "text-rose-400 bg-rose-400/10" : c.priority === "urgent" ? "text-amber-400 bg-amber-400/10" : "text-slate-500 bg-slate-500/10"}`}>
                             {c.priority}
                           </span>
                         </div>
-                        <div className="font-medium text-white text-sm mb-2">
+                        <div className="font-medium text-sm mb-2" style={{ color: "var(--text-primary)" }}>
                           {c.patients?.first_name} {c.patients?.last_name}
                         </div>
                         {c.case_phenotypes?.length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {c.case_phenotypes.slice(0, 2).map((p: any) => (
-                              <span key={p.id} className="text-xs px-1.5 py-0.5 rounded text-slate-500"
-                                style={{ background: "rgba(255,255,255,0.04)" }}>
+                              <span key={p.id} className="text-xs px-1.5 py-0.5 rounded" style={{ background: "var(--bg-hover)", color: "var(--text-muted)" }}>
                                 {p.name}
                               </span>
                             ))}
                             {c.case_phenotypes.length > 2 && (
-                              <span className="text-xs text-slate-600">+{c.case_phenotypes.length - 2}</span>
+                              <span className="text-xs" style={{ color: "var(--text-muted)" }}>+{c.case_phenotypes.length - 2}</span>
                             )}
                           </div>
                         )}
-                        <div className="text-xs text-slate-600 mt-2">{formatDate(c.created_at)}</div>
+                        <div className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>{formatDate(c.created_at)}</div>
                       </div>
                     </Link>
                   ))}

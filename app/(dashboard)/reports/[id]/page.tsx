@@ -2,8 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Topbar } from "@/components/layout/topbar";
 import { formatDate, getPathogenicityBadgeClass } from "@/lib/utils";
-import { ArrowLeft, CheckCircle, Download, Printer } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { ReportFinalizeAction, ReportPrintAction } from "./report-actions";
 
 export default async function ReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -36,7 +37,7 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
       <Topbar title={report.report_number} subtitle="Clinical Genomics Report" />
       <div className="p-6 max-w-4xl mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
-          <Link href="/reports" className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm">
+          <Link href="/reports" className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity" style={{ color: "var(--text-secondary)" }}>
             <ArrowLeft size={16} /> Back to reports
           </Link>
           <div className="flex items-center gap-2">
@@ -45,11 +46,7 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
               "text-amber-400 bg-amber-400/10 border border-amber-400/20"}`}>
               {report.status}
             </span>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-slate-300 hover:text-white transition-all"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
-              onClick={() => window.print()}>
-              <Printer size={14} /> Print
-            </button>
+            <ReportPrintAction />
           </div>
         </div>
 
@@ -60,15 +57,15 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
             style={{ background: "linear-gradient(135deg, rgba(59,130,246,0.08), rgba(139,92,246,0.05))", border: "1px solid rgba(59,130,246,0.2)" }}>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-xl font-bold text-white">Clinical Genomics Report</h1>
-                <p className="text-slate-400 text-sm">{report.report_number}</p>
+                <h1 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>Clinical Genomics Report</h1>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{report.report_number}</p>
               </div>
-              <div className="text-right text-sm text-slate-400">
+              <div className="text-right text-sm" style={{ color: "var(--text-secondary)" }}>
                 <div>Generated: {formatDate(report.created_at)}</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
               {[
                 { label: "Patient Name", value: `${patient?.first_name} ${patient?.last_name}` },
                 { label: "MRN", value: patient?.mrn },
@@ -76,51 +73,51 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
                 { label: "Sex", value: patient?.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : "—" },
               ].map(({ label, value }) => (
                 <div key={label}>
-                  <div className="text-xs text-slate-500 mb-1">{label}</div>
-                  <div className="text-sm font-medium text-white">{value}</div>
+                  <div className="text-xs mb-1" style={{ color: "var(--text-muted)" }}>{label}</div>
+                  <div className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{value}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Executive Summary */}
-          <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <h2 className="text-lg font-bold text-white mb-4">Executive Summary</h2>
-            <p className="text-slate-300 leading-relaxed">{report.summary}</p>
+          <div className="card rounded-2xl p-6">
+            <h2 className="text-lg font-bold mb-4" style={{ color: "var(--text-primary)" }}>Executive Summary</h2>
+            <p className="leading-relaxed" style={{ color: "var(--text-primary)" }}>{report.summary}</p>
           </div>
 
           {/* Clinical Interpretation */}
-          <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <h2 className="text-lg font-bold text-white mb-4">Clinical Interpretation</h2>
-            <div className="text-slate-300 leading-relaxed whitespace-pre-wrap">{report.interpretation}</div>
+          <div className="card rounded-2xl p-6">
+            <h2 className="text-lg font-bold mb-4" style={{ color: "var(--text-primary)" }}>Clinical Interpretation</h2>
+            <div className="leading-relaxed whitespace-pre-wrap" style={{ color: "var(--text-primary)" }}>{report.interpretation}</div>
           </div>
 
           {/* Variants */}
           {variants && variants.length > 0 && (
-            <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <div className="px-6 py-4 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
-                <h2 className="text-lg font-bold text-white">Reportable Variants</h2>
+            <div className="card rounded-2xl overflow-hidden">
+              <div className="px-6 py-4 border-b" style={{ borderColor: "var(--border)" }}>
+                <h2 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>Reportable Variants</h2>
               </div>
               <table className="w-full">
                 <thead>
-                  <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                  <tr style={{ borderBottom: "1px solid var(--border)" }}>
                     {["Gene", "Variant", "Classification", "Consequence", "gnomAD AF"].map((h) => (
-                      <th key={h} className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">{h}</th>
+                      <th key={h} className="px-6 py-3 text-left text-xs font-medium uppercase" style={{ color: "var(--text-muted)" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {variants.map((v, i) => (
-                    <tr key={v.id} style={{ borderBottom: i < variants.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
-                      <td className="px-6 py-3 text-sm font-bold text-white font-mono">{v.gene_symbol ?? "—"}</td>
-                      <td className="px-6 py-3 text-xs font-mono text-slate-300">{v.hgvs_c ?? `${v.chromosome}:${v.position}`}</td>
+                    <tr key={v.id} style={{ borderBottom: i < variants.length - 1 ? "1px solid var(--border)" : "none" }}>
+                      <td className="px-6 py-3 text-sm font-bold font-mono" style={{ color: "var(--text-primary)" }}>{v.gene_symbol ?? "—"}</td>
+                      <td className="px-6 py-3 text-xs font-mono" style={{ color: "var(--text-primary)" }}>{v.hgvs_c ?? `${v.chromosome}:${v.position}`}</td>
                       <td className="px-6 py-3">
                         <span className={`text-xs px-2 py-1 rounded-lg font-medium ${getPathogenicityBadgeClass(v.classification)}`}>
                           {v.classification?.replace(/_/g, " ")}
                         </span>
                       </td>
-                      <td className="px-6 py-3 text-xs text-slate-400">{v.consequence ?? "—"}</td>
-                      <td className="px-6 py-3 text-xs font-mono text-slate-400">
+                      <td className="px-6 py-3 text-xs" style={{ color: "var(--text-secondary)" }}>{v.consequence ?? "—"}</td>
+                      <td className="px-6 py-3 text-xs font-mono" style={{ color: "var(--text-secondary)" }}>
                         {v.gnomad_af ? v.gnomad_af.toExponential(2) : "—"}
                       </td>
                     </tr>
@@ -132,18 +129,18 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
 
           {/* AI Diagnoses */}
           {diagnoses && diagnoses.length > 0 && (
-            <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <h2 className="text-lg font-bold text-white mb-4">Differential Diagnoses</h2>
+            <div className="card rounded-2xl p-6">
+              <h2 className="text-lg font-bold mb-4" style={{ color: "var(--text-primary)" }}>Differential Diagnoses</h2>
               <div className="space-y-3">
                 {diagnoses.slice(0, 3).map((d: any) => (
-                  <div key={d.id} className="flex items-center gap-4 p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.03)" }}>
-                    <span className="text-slate-500 text-sm font-mono">#{d.rank}</span>
+                  <div key={d.id} className="flex items-center gap-4 p-3 rounded-xl" style={{ background: "var(--bg-hover)" }}>
+                    <span className="text-sm font-mono" style={{ color: "var(--text-muted)" }}>#{d.rank}</span>
                     <div className="flex-1">
-                      <div className="font-medium text-white text-sm">{d.disease_name}</div>
-                      {d.omim_id && <div className="text-xs text-slate-500">OMIM: {d.omim_id}</div>}
+                      <div className="font-medium text-sm" style={{ color: "var(--text-primary)" }}>{d.disease_name}</div>
+                      {d.omim_id && <div className="text-xs" style={{ color: "var(--text-muted)" }}>OMIM: {d.omim_id}</div>}
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-sm" style={{ color: d.confidence >= 70 ? "#10b981" : d.confidence >= 40 ? "#fbbf24" : "#94a3b8" }}>
+                      <div className="font-bold text-sm" style={{ color: d.confidence >= 70 ? "#10b981" : d.confidence >= 40 ? "#fbbf24" : "var(--text-secondary)" }}>
                         {d.confidence}%
                       </div>
                     </div>
@@ -154,26 +151,17 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
           )}
 
           {/* Recommendations */}
-          <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <h2 className="text-lg font-bold text-white mb-4">Recommendations</h2>
-            <div className="text-slate-300 leading-relaxed whitespace-pre-wrap">{report.recommendations}</div>
+          <div className="card rounded-2xl p-6">
+            <h2 className="text-lg font-bold mb-4" style={{ color: "var(--text-primary)" }}>Recommendations</h2>
+            <div className="leading-relaxed whitespace-pre-wrap" style={{ color: "var(--text-primary)" }}>{report.recommendations}</div>
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
-            <p className="text-xs text-slate-500">
+          <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
               This report is generated by GenoScope AI. Clinical validation by a certified geneticist is required before clinical use.
             </p>
-            {report.status === "draft" && (
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white"
-                style={{ background: "linear-gradient(135deg, #10b981, #06b6d4)" }}
-                onClick={async () => {
-                  await fetch(`/api/reports/finalize`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ report_id: id }) });
-                  window.location.reload();
-                }}>
-                <CheckCircle size={14} /> Approve & Finalize
-              </button>
-            )}
+            {report.status === "draft" && <ReportFinalizeAction reportId={id} />}
           </div>
         </div>
       </div>

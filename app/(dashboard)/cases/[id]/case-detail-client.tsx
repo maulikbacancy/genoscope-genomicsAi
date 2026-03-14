@@ -76,7 +76,7 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
       />
       <div className="p-6">
         <div className="flex items-center gap-3 mb-6 flex-wrap">
-          <Link href="/cases" className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm">
+          <Link href="/cases" className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity" style={{ color: "var(--text-secondary)" }}>
             <ArrowLeft size={16} /> Back
           </Link>
           <span className={`text-xs px-3 py-1.5 rounded-lg font-medium ${getCaseStatusColor(caseData.status)}`}>
@@ -95,14 +95,13 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
               onChange={(e) => updateStatus(e.target.value)}
               defaultValue={caseData.status}
               disabled={statusUpdating}
-              className="px-3 py-1.5 rounded-lg text-sm text-slate-300 outline-none"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", fontFamily: "inherit" }}>
-              <option value="new" style={{ background: "#1e293b" }}>New</option>
-              <option value="sequencing" style={{ background: "#1e293b" }}>Sequencing</option>
-              <option value="analysis" style={{ background: "#1e293b" }}>Analysis</option>
-              <option value="review" style={{ background: "#1e293b" }}>Review</option>
-              <option value="closed" style={{ background: "#1e293b" }}>Closed</option>
-              <option value="reanalysis" style={{ background: "#1e293b" }}>Reanalysis</option>
+              className="field-input px-3 py-1.5 rounded-lg text-sm outline-none">
+              <option value="new" style={{ background: "var(--bg-card-solid)" }}>New</option>
+              <option value="sequencing" style={{ background: "var(--bg-card-solid)" }}>Sequencing</option>
+              <option value="analysis" style={{ background: "var(--bg-card-solid)" }}>Analysis</option>
+              <option value="review" style={{ background: "var(--bg-card-solid)" }}>Review</option>
+              <option value="closed" style={{ background: "var(--bg-card-solid)" }}>Closed</option>
+              <option value="reanalysis" style={{ background: "var(--bg-card-solid)" }}>Reanalysis</option>
             </select>
             <button onClick={runAIAnalysis} disabled={running}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60"
@@ -114,11 +113,11 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+        <div className="flex gap-1 mb-6 border-b" style={{ borderColor: "var(--border)" }}>
           {TABS.map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className="px-4 py-2.5 text-sm font-medium transition-all relative"
-              style={{ color: activeTab === tab ? "#60a5fa" : "#64748b" }}>
+              style={{ color: activeTab === tab ? "#60a5fa" : "var(--text-muted)" }}>
               {tab}
               {activeTab === tab && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full" style={{ background: "#3b82f6" }} />
@@ -131,34 +130,34 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
         {activeTab === "Overview" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="space-y-4">
-              <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+              <div className="card rounded-2xl p-5">
+                <h3 className="font-semibold mb-4 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
                   <User size={16} className="text-blue-400" /> Patient
                 </h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Name</span>
+                    <span style={{ color: "var(--text-secondary)" }}>Name</span>
                     <Link href={`/patients/${patient?.id}`} className="text-blue-400 hover:text-blue-300">
                       {patient?.first_name} {patient?.last_name}
                     </Link>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">MRN</span>
-                    <span className="text-slate-200 font-mono text-xs">{patient?.mrn}</span>
+                    <span style={{ color: "var(--text-secondary)" }}>MRN</span>
+                    <span className="font-mono text-xs" style={{ color: "var(--text-primary)" }}>{patient?.mrn}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Sex</span>
-                    <span className="text-slate-200 capitalize">{patient?.sex}</span>
+                    <span style={{ color: "var(--text-secondary)" }}>Sex</span>
+                    <span className="capitalize" style={{ color: "var(--text-primary)" }}>{patient?.sex}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+              <div className="card rounded-2xl p-5">
+                <h3 className="font-semibold mb-4 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
                   <Activity size={16} className="text-purple-400" /> Phenotypes
                 </h3>
                 {phenotypes.length === 0 ? (
-                  <p className="text-slate-500 text-sm">No phenotypes recorded</p>
+                  <p className="text-sm" style={{ color: "var(--text-muted)" }}>No phenotypes recorded</p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
                     {phenotypes.map((p: any) => (
@@ -173,41 +172,41 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
             </div>
 
             <div className="lg:col-span-2 space-y-4">
-              <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <h3 className="font-semibold text-white mb-4">Clinical Notes</h3>
-                <p className="text-slate-300 text-sm leading-relaxed">
-                  {caseData.clinical_notes || <span className="text-slate-500 italic">No clinical notes recorded</span>}
+              <div className="card rounded-2xl p-5">
+                <h3 className="font-semibold mb-4" style={{ color: "var(--text-primary)" }}>Clinical Notes</h3>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--text-primary)" }}>
+                  {caseData.clinical_notes || <span className="italic" style={{ color: "var(--text-muted)" }}>No clinical notes recorded</span>}
                 </p>
               </div>
 
-              <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <h3 className="font-semibold text-white mb-4">Family History</h3>
-                <p className="text-slate-300 text-sm leading-relaxed">
-                  {caseData.family_history || <span className="text-slate-500 italic">No family history recorded</span>}
+              <div className="card rounded-2xl p-5">
+                <h3 className="font-semibold mb-4" style={{ color: "var(--text-primary)" }}>Family History</h3>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--text-primary)" }}>
+                  {caseData.family_history || <span className="italic" style={{ color: "var(--text-muted)" }}>No family history recorded</span>}
                 </p>
               </div>
 
               {/* Samples */}
-              <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="card rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-white flex items-center gap-2">
+                  <h3 className="font-semibold flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
                     <FlaskConical size={16} className="text-cyan-400" /> Samples
                   </h3>
                   <Link href={`/samples/new?case=${caseData.id}`} className="text-sm text-blue-400 hover:text-blue-300">+ Upload</Link>
                 </div>
                 {samples.length === 0 ? (
                   <div className="text-center py-6">
-                    <FlaskConical size={24} className="text-slate-600 mx-auto mb-2" />
-                    <p className="text-slate-500 text-sm">No samples uploaded yet</p>
+                    <FlaskConical size={24} className="mx-auto mb-2" style={{ color: "var(--text-muted)" }} />
+                    <p className="text-sm" style={{ color: "var(--text-muted)" }}>No samples uploaded yet</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
                     {samples.map((s: any) => (
                       <div key={s.id} className="flex items-center justify-between p-3 rounded-xl"
-                        style={{ background: "rgba(255,255,255,0.03)" }}>
+                        style={{ background: "var(--bg-hover)" }}>
                         <div>
-                          <span className="text-sm font-medium text-slate-200 font-mono">{s.barcode}</span>
-                          <span className="text-xs text-slate-500 ml-2">{s.sample_type.replace("_", " ")}</span>
+                          <span className="text-sm font-medium font-mono" style={{ color: "var(--text-primary)" }}>{s.barcode}</span>
+                          <span className="text-xs ml-2" style={{ color: "var(--text-muted)" }}>{s.sample_type.replace("_", " ")}</span>
                         </div>
                         <span className={`text-xs px-2 py-0.5 rounded-lg ${
                           s.status === "completed" ? "text-emerald-400 bg-emerald-400/10" :
@@ -226,41 +225,41 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
 
         {/* Variants Tab */}
         {activeTab === "Variants" && (
-          <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="card rounded-2xl overflow-hidden">
             {variants.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16">
-                <GitBranch size={32} className="text-slate-600 mb-3" />
-                <p className="text-slate-400 text-sm mb-2">No variants found</p>
-                <p className="text-slate-500 text-xs">Upload a VCF file to start variant analysis</p>
+                <GitBranch size={32} className="mb-3" style={{ color: "var(--text-muted)" }} />
+                <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>No variants found</p>
+                <p className="text-xs" style={{ color: "var(--text-muted)" }}>Upload a VCF file to start variant analysis</p>
               </div>
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                  <tr style={{ borderBottom: "1px solid var(--border)" }}>
                     {["Gene", "Variant", "Consequence", "Classification", "gnomAD AF", "ClinVar"].map((h) => (
-                      <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{h}</th>
+                      <th key={h} className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {variants.map((v, i) => (
-                    <tr key={v.id} style={{ borderBottom: i < variants.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
+                    <tr key={v.id} style={{ borderBottom: i < variants.length - 1 ? "1px solid var(--border)" : "none" }}
                       className="hover:bg-white/[0.02]">
-                      <td className="px-4 py-3 text-sm font-semibold text-white font-mono">{v.gene_symbol ?? "—"}</td>
+                      <td className="px-4 py-3 text-sm font-semibold font-mono" style={{ color: "var(--text-primary)" }}>{v.gene_symbol ?? "—"}</td>
                       <td className="px-4 py-3">
-                        <div className="text-xs font-mono text-slate-300">{v.hgvs_c ?? `${v.chromosome}:${v.position}`}</div>
-                        {v.hgvs_p && <div className="text-xs font-mono text-slate-500">{v.hgvs_p}</div>}
+                        <div className="text-xs font-mono" style={{ color: "var(--text-primary)" }}>{v.hgvs_c ?? `${v.chromosome}:${v.position}`}</div>
+                        {v.hgvs_p && <div className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>{v.hgvs_p}</div>}
                       </td>
-                      <td className="px-4 py-3 text-xs text-slate-400">{v.consequence ?? "—"}</td>
+                      <td className="px-4 py-3 text-xs" style={{ color: "var(--text-secondary)" }}>{v.consequence ?? "—"}</td>
                       <td className="px-4 py-3">
                         <span className={`text-xs px-2 py-1 rounded-lg font-medium ${getPathogenicityBadgeClass(v.classification)}`}>
                           {v.classification?.replace("_", " ")}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs font-mono text-slate-400">
+                      <td className="px-4 py-3 text-xs font-mono" style={{ color: "var(--text-secondary)" }}>
                         {v.gnomad_af ? v.gnomad_af.toExponential(2) : "—"}
                       </td>
-                      <td className="px-4 py-3 text-xs text-slate-400">{v.clinvar_significance ?? "—"}</td>
+                      <td className="px-4 py-3 text-xs" style={{ color: "var(--text-secondary)" }}>{v.clinvar_significance ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -278,18 +277,18 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
                   style={{ background: "rgba(139,92,246,0.15)" }}>
                   <Brain size={28} className="text-purple-400" />
                 </div>
-                <h3 className="text-white font-semibold mb-2">AI Analysis Running</h3>
-                <p className="text-slate-400 text-sm">Analyzing variants and phenotypes with GPT-4o...</p>
+                <h3 className="font-semibold mb-2" style={{ color: "var(--text-primary)" }}>AI Analysis Running</h3>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Analyzing variants and phenotypes with GPT-4o...</p>
                 <div className="flex justify-center gap-1 mt-4">
                   {[0,1,2].map((i) => <div key={i} className="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />)}
                 </div>
               </div>
             )}
             {!running && diagnoses.length === 0 && (
-              <div className="rounded-2xl p-8 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <Brain size={32} className="text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400 mb-2">No AI analysis yet</p>
-                <p className="text-slate-500 text-sm mb-4">Upload samples and run AI analysis to get disease predictions</p>
+              <div className="card rounded-2xl p-8 text-center">
+                <Brain size={32} className="mx-auto mb-3" style={{ color: "var(--text-muted)" }} />
+                <p className="mb-2" style={{ color: "var(--text-secondary)" }}>No AI analysis yet</p>
+                <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>Upload samples and run AI analysis to get disease predictions</p>
                 <button onClick={runAIAnalysis}
                   className="px-4 py-2 rounded-xl text-sm font-semibold text-white"
                   style={{ background: "linear-gradient(135deg, #8b5cf6, #3b82f6)" }}>
@@ -298,46 +297,45 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
               </div>
             )}
             {diagnoses.map((d: any) => (
-              <div key={d.id} className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div key={d.id} className="card rounded-2xl p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <div className="flex items-center gap-3 mb-1">
-                      <span className="text-xs px-2 py-0.5 rounded-full font-mono text-slate-400"
-                        style={{ background: "rgba(255,255,255,0.05)" }}>#{d.rank}</span>
-                      <h3 className="text-white font-semibold">{d.disease_name}</h3>
-                      {d.omim_id && <span className="text-xs text-slate-500 font-mono">OMIM:{d.omim_id}</span>}
+                      <span className="text-xs px-2 py-0.5 rounded-full font-mono" style={{ background: "var(--bg-hover)", color: "var(--text-secondary)" }}>#{d.rank}</span>
+                      <h3 className="font-semibold" style={{ color: "var(--text-primary)" }}>{d.disease_name}</h3>
+                      {d.omim_id && <span className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>OMIM:{d.omim_id}</span>}
                     </div>
                     {d.inheritance_pattern && (
-                      <span className="text-xs text-slate-400">{d.inheritance_pattern.replace(/_/g, " ")}</span>
+                      <span className="text-xs" style={{ color: "var(--text-secondary)" }}>{d.inheritance_pattern.replace(/_/g, " ")}</span>
                     )}
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold" style={{
-                      color: d.confidence >= 70 ? "#10b981" : d.confidence >= 40 ? "#fbbf24" : "#94a3b8"
+                      color: d.confidence >= 70 ? "#10b981" : d.confidence >= 40 ? "#fbbf24" : "var(--text-secondary)"
                     }}>
                       {d.confidence}%
                     </div>
-                    <div className="text-xs text-slate-500">confidence</div>
+                    <div className="text-xs" style={{ color: "var(--text-muted)" }}>confidence</div>
                   </div>
                 </div>
 
                 {/* Confidence bar */}
-                <div className="h-1.5 rounded-full mb-4" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <div className="h-1.5 rounded-full mb-4" style={{ background: "var(--bg-input)" }}>
                   <div className="h-full rounded-full transition-all"
                     style={{
                       width: `${d.confidence}%`,
-                      background: d.confidence >= 70 ? "#10b981" : d.confidence >= 40 ? "#fbbf24" : "#94a3b8",
+                      background: d.confidence >= 70 ? "#10b981" : d.confidence >= 40 ? "#fbbf24" : "var(--text-secondary)",
                     }} />
                 </div>
 
-                <p className="text-slate-300 text-sm leading-relaxed mb-4">{d.reasoning}</p>
+                <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--text-primary)" }}>{d.reasoning}</p>
 
                 {d.next_steps?.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-medium text-slate-400 mb-2">Recommended Next Steps</h4>
+                    <h4 className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Recommended Next Steps</h4>
                     <ul className="space-y-1">
                       {d.next_steps.map((step: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                        <li key={i} className="flex items-start gap-2 text-sm" style={{ color: "var(--text-primary)" }}>
                           <CheckCircle size={14} className="text-emerald-400 mt-0.5 flex-shrink-0" />
                           {step}
                         </li>
@@ -353,8 +351,8 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
         {/* Reports Tab */}
         {activeTab === "Reports" && (
           <div className="text-center py-16">
-            <FileText size={32} className="text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-400 mb-4">Generate a clinical report for this case</p>
+            <FileText size={32} className="mx-auto mb-3" style={{ color: "var(--text-muted)" }} />
+            <p className="mb-4" style={{ color: "var(--text-secondary)" }}>Generate a clinical report for this case</p>
             <button
               onClick={async () => {
                 const res = await fetch("/api/reports/generate", {
@@ -381,13 +379,13 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
                   style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)" }}>
                   {c.user_profiles?.full_name?.[0] ?? "U"}
                 </div>
-                <div className="flex-1 rounded-xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="flex-1 card rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm font-medium text-white">{c.user_profiles?.full_name}</span>
-                    <span className="text-xs text-slate-500 capitalize">{c.user_profiles?.role?.replace("_", " ")}</span>
-                    <span className="text-xs text-slate-600 ml-auto">{formatDate(c.created_at)}</span>
+                    <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{c.user_profiles?.full_name}</span>
+                    <span className="text-xs capitalize" style={{ color: "var(--text-muted)" }}>{c.user_profiles?.role?.replace("_", " ")}</span>
+                    <span className="text-xs ml-auto" style={{ color: "var(--text-muted)" }}>{formatDate(c.created_at)}</span>
                   </div>
-                  <p className="text-slate-300 text-sm">{c.content}</p>
+                  <p className="text-sm" style={{ color: "var(--text-primary)" }}>{c.content}</p>
                 </div>
               </div>
             ))}
@@ -397,8 +395,7 @@ export function CaseDetailClient({ caseData, variants, aiDiagnoses: initialDiagn
                 <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Add a comment..."
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 text-sm outline-none resize-none"
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", fontFamily: "inherit" }} />
+                  className="field-input w-full px-4 py-3 rounded-xl text-sm outline-none resize-none" />
                 <button onClick={addComment} disabled={!newComment.trim()}
                   className="absolute right-3 bottom-3 p-2 rounded-lg transition-all disabled:opacity-40"
                   style={{ background: "rgba(59,130,246,0.2)" }}>
